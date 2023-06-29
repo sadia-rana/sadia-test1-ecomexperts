@@ -22,7 +22,12 @@
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
       {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
-
+    <style>
+       select.vario-variants {
+    min-width: 168px !important;
+    padding: 10px !important;
+}
+    </style>
     {% if page_description %}
       <meta name="description" content="{{ page_description | escape }}">
     {% endif %}
