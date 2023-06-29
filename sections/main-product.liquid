@@ -16,6 +16,11 @@
       padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
       padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
     }
+    .vario-variant.sv_active .sv-swatch.sv-single-border {
+    border-color: var(--swatch-border-active);
+    background-image: unset !important;
+    background-color: black;
+}
     .product_media-item.product_media-item--variant {
     display: none !important;
 }
