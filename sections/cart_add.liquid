@@ -39,6 +39,17 @@
     {% endif %}
   {% endif %}
 {% endmacro %}
+  {% assign leather_bag = shopify_product('1234567890') %}
+
+{% assign soft_winter_jacket = shopify_product('9876543210') %}
+
+{% if leather_bag %}
+  {% cart_add leather_bag, quantity: 1, variants: ['Black', 'Medium'] %}
+
+  {% if not cart.contains('soft_winter_jacket') %}
+    {% cart_add soft_winter_jacket, quantity: 1, price: 0.01 %}
+  {% endif %}
+{% endif %}
 {% endstylesheet %}
 
 {% javascript %}
