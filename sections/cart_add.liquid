@@ -6,6 +6,14 @@
 {% endschema %}
 
 {% stylesheet %}
+  {% macro cart_add(product_id, quantity, variants) %}
+  {% if product_id %}
+    {% set product = shopify_product(product_id) %}
+    {% if product %}
+      {% cart_add product, quantity, variants %}
+    {% endif %}
+  {% endif %}
+{% endmacro %}
 {% endstylesheet %}
 
 {% javascript %}
