@@ -3,8 +3,33 @@
     "name": "Section name",
     "settings": []
   }
+  
 {% endschema %}
-
+{
+   "tags":[
+      {
+         "name":"cart_add",
+         "description":"Adds a product to the cart",
+         "parameters":[
+            {
+               "name":"product_id",
+               "description":"The ID of the product to add to the cart",
+               "type":"string"
+            },
+            {
+               "name":"quantity",
+               "description":"The quantity of the product to add to the cart",
+               "type":"integer"
+            },
+            {
+               "name":"variants",
+               "description":"The variants of the product to add to the cart",
+               "type":"array"
+            }
+         ]
+      }
+   ]
+}
 {% stylesheet %}
   {% macro cart_add(product_id, quantity, variants) %}
   {% if product_id %}
