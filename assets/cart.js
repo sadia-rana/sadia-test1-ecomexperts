@@ -1,4 +1,4 @@
-document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0].onclick = function(){ document.querySelectorAll('[aria-label="Remove Handbag - Black / Medium"]')[0].click() }
+
 class CartRemoveButton extends HTMLElement {
   constructor() {
     super();
