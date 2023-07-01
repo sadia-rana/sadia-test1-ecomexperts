@@ -1,4 +1,11 @@
-document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0].onclick = function(){ document.querySelectorAll('[aria-label="Remove Handbag - Black / Medium"]')[0].click() }
+if(document.querySelectorAll('[aria-label*="Remove Handbag"]')[0]){
+    document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].onclick = function(){ 
+        document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0].click(); 
+        setTimeout(function(){    
+            document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].click();
+         }, 2000);
+    }
+}
 class CartRemoveButton extends HTMLElement {
   constructor() {
     super();
