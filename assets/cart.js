@@ -8,7 +8,7 @@ window.onload = function() {
             }, 2000);
         }
     }
-  }, 3000);
+  }, 1500);
 };
 
 class CartRemoveButton extends HTMLElement {
