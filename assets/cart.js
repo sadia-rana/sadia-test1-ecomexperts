@@ -1,11 +1,16 @@
-if(document.querySelectorAll('[aria-label*="Remove Handbag"]')[0]){
-    document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].onclick = function(){ 
-        document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0].click(); 
-        setTimeout(function(){    
-            document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].click();
-         }, 2000);
+window.onload = function() {
+  setTimeout(function(){ 
+    if(document.querySelectorAll('[aria-label*="Remove Handbag"]')[0]){
+        document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].onclick = function(){ 
+            document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0].click(); 
+            setTimeout(function(){    
+                document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].click();
+            }, 2000);
+        }
     }
-}
+  }, 3000);
+};
+
 class CartRemoveButton extends HTMLElement {
   constructor() {
     super();
