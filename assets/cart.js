@@ -1,4 +1,3 @@
-console.log('cart page loaded');
 function delBoth(bag1, bag2){
      document.querySelectorAll(bag1)[0].onclick = function(){ 
         setTimeout(function(){   
@@ -6,12 +5,17 @@ function delBoth(bag1, bag2){
         }, 2000);
     }
 }
+
 setTimeout(function(){   
     bag1 = '[aria-label*="Remove Handbag"]'; 
     bag2 = '[aria-label="Remove Soft Winter Jacket"]';
+    console.log('cart page loaded');
+
+    console.log('bag1: ', bag1);
+    console.log('bag2: ', bag2);
+  
     delBoth(bag1, bag2);
     delBoth(bag2, bag1);
-   
 }, 1000);
     
 
