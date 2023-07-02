@@ -1,9 +1,19 @@
 window.onload = function() {
+  console.log('page loaded')
   setTimeout(function(){ 
+    console.log('timeOuted');
+    console.log('handbag: ', document.querySelectorAll('[aria-label*="Remove Handbag"]')[0] );
+    console.log('SoftWinter: ', document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0] );
     if(document.querySelectorAll('[aria-label*="Remove Handbag"]')[0]){
         document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].onclick = function(){ 
-            document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0].click(); 
+            
+            console.log('handBag Clicked');
+            
+            document.querySelectorAll('[aria-label="Remove Soft Winter Jacket"]')[0].click();
+            
             setTimeout(function(){    
+              console.log('handBag after 2sec of Clicked');
+              
                 document.querySelectorAll('[aria-label*="Remove Handbag"]')[0].click();
             }, 2000);
         }
