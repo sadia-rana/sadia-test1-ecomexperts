@@ -19,7 +19,7 @@ window.onload = function() {
         }
     }
   }, 1500);
-};
+}
 
 class CartRemoveButton extends HTMLElement {
   constructor() {
