@@ -1,4 +1,19 @@
 console.log('cart page loaded');
+function delBoth(bag1, bag2){
+     document.querySelectorAll(bag1)[0].onclick = function(){ 
+        setTimeout(function(){   
+             if(document.querySelectorAll(bag2)[0]){document.querySelectorAll(bag2)[0].click();}
+        }, 2000);
+    }
+}
+setTimeout(function(){   
+    bag1 = '[aria-label*="Remove Handbag"]'; 
+    bag2 = '[aria-label="Remove Soft Winter Jacket"]';
+    delBoth(bag1, bag2);
+    delBoth(bag2, bag1);
+   
+}, 1000);
+    
 
 class CartRemoveButton extends HTMLElement {
   constructor() {
@@ -7,6 +22,7 @@ class CartRemoveButton extends HTMLElement {
     this.addEventListener('click', (event) => {
       event.preventDefault();
       const cartItems = this.closest('cart-items') || this.closest('cart-drawer-items');
+      console.log('cartItems: ',cartItems);
       cartItems.updateQuantity(this.dataset.index, 0);
     });
   }
