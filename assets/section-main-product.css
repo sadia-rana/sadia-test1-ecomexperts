@@ -1582,6 +1582,22 @@ a.product__text {
   text-transform: capitalize;
 }
 
+input[value="Black"]+label, input[value="Red"]+label, input[value="Tan"]+label {
+    color: black !important;
+    width: 40px;
+    font-size: 0 !important;
+    height: 40px;
+    margin-top: 0 !important;
+    border:0 !important;
+}
+
+input[value="Red"]+label {
+    background:red !important;
+}
+input[value="Tan"]+label {
+    background:tan !important;
+}
+
 @media screen and (forced-colors: active) {
   .recipient-fields > hr {
     border-top: 0.1rem solid rgb(var(--color-background));
