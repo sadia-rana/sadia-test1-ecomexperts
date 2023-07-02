@@ -1,4 +1,4 @@
-
+console.log('cart page loaded');
 
 class CartRemoveButton extends HTMLElement {
   constructor() {
