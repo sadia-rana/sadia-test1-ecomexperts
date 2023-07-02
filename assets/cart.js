@@ -1,4 +1,4 @@
-window.onload = function() {
+// window.onload = function() {
   console.log('page loaded')
   setTimeout(function(){ 
     console.log('timeOuted');
@@ -19,7 +19,7 @@ window.onload = function() {
         }
     }
   }, 1500);
-}
+// }
 
 class CartRemoveButton extends HTMLElement {
   constructor() {
