@@ -1590,7 +1590,9 @@ input[value="Black"]+label, input[value="Red"]+label, input[value="Tan"]+label {
     margin-top: 0 !important;
     border:0 !important;
 }
-
+input[value=Black]+label {
+    background-color: black !important;
+}
 input[value="Red"]+label {
     background:red !important;
 }
