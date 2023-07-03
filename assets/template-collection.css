@@ -11,6 +11,9 @@
   }
 }
 
+.globo-swatch-list {
+    display: none;
+}
 .collection .loading-overlay {
   top: 0;
   right: 0;

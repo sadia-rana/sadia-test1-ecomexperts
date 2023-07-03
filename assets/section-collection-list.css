@@ -7,10 +7,6 @@
   margin: 0;
 }
 
-
-.globo-swatch-list {
-    display: none;
-}
 @media screen and (max-width: 749px) {
   .collection-list:not(.slider) {
     padding-left: 0;
