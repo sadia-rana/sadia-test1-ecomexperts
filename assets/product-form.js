@@ -111,6 +111,7 @@ if (!customElements.get('product-form')) {
     }
   );
 }
+<--For adding product to cart -->
 const bag = document.querySelector('[type="submit"]').parentElement.previousElementSibling.getAttribute('value') == '45671309214014';
 if(bag) {
     const button = document.querySelector('[type="submit"]');
