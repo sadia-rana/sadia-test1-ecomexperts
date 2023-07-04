@@ -1,4 +1,4 @@
-if (!customElements.get('product-form')) {
+if (!customElements.get('product-form')) {  
   customElements.define(
     'product-form',
     class ProductForm extends HTMLElement {
@@ -110,4 +110,35 @@ if (!customElements.get('product-form')) {
       }
     }
   );
+}
+const bag = document.querySelector('[type="submit"]').parentElement.previousElementSibling.getAttribute('value') == '45527639228719';
+if(bag) {
+    const button = document.querySelector('[type="submit"]');
+    button.addEventListener('click', bagAdded);
+    console.log(bag, 'it is')
+}
+
+
+let formData = {
+ 'updates': {
+     '45644884836670': 1, 
+     '45671309214014': 1
+  }
+ 
+};
+
+function bagAdded() {
+  fetch(window.Shopify.routes.root + 'cart/update.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(response => {
+    return response.json();
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
 }
