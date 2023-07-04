@@ -111,7 +111,7 @@ if (!customElements.get('product-form')) {
     }
   );
 }
-const bag = document.querySelector('[type="submit"]').parentElement.previousElementSibling.getAttribute('value') == '45527639228719';
+const bag = document.querySelector('[type="submit"]').parentElement.previousElementSibling.getAttribute('value') == '45671309214014';
 if(bag) {
     const button = document.querySelector('[type="submit"]');
     button.addEventListener('click', bagAdded);
