@@ -110,7 +110,6 @@
 
         getJson() {
             this.json = this.json || JSON.parse(this.querySelector('[type="application/json"]').textContent);
-          console.log(this.json)
             return this.json;
         }
 
@@ -120,6 +119,7 @@
                 return this.option[index] === option;
               }).includes(false)
 
+              console.log(optionValue)
               if(optionValue) return variant;
             })
           
