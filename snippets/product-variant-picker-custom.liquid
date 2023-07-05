@@ -14,7 +14,6 @@
     cursor: pointer;
   }
 </style>
-
 <variant-selector class="options" data-url="{{ product.url }}" data-section="{{ section.id }}">
   {% for option in product.options_with_values %}
     {% if option.name == 'Size' %}
