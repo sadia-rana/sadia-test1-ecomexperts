@@ -123,9 +123,7 @@ if(bag) {
 let formData = {
  'updates': {
      '45644884836670': 1 
-     
   }
- 
 };
 
 function bagAdded() {
