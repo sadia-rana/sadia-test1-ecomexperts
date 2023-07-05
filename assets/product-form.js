@@ -1,46 +1,5 @@
-if (!customElements.get('product-form')) {
-  customElements.define(
-    'product-form',
-    class ProductForm extends HTMLElement {
-      constructor() {
-        super();
-
-        this.form = this.querySelector('form');
-        this.form.querySelector('[name=id]').disabled = false;
-        this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
-        this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
-        this.submitButton = this.querySelector('[type="submit"]');
-        if (document.querySelector('cart-drawer')) this.submitButton.setAttribute('aria-haspopup', 'dialog');
-
-        this.hideErrors = this.dataset.hideErrors === 'true';
-      }
-
-      onSubmitHandler(evt) {
-        evt.preventDefault();
-        if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
-
-        this.handleErrorMessage();
-
-        this.submitButton.setAttribute('aria-disabled', true);
-        this.submitButton.classList.add('loading');
-        this.querySelector('.loading-overlay__spinner').classList.remove('hidden');
-
-        const config = fetchConfig('javascript');
-        config.headers['X-Requested-With'] = 'XMLHttpRequest';
-        delete config.headers['Content-Type'];
-
-        const formData = new FormData(this.form);
-        if (this.cart) {
-          formData.append(
-            'sections',
-            this.cart.getSectionsToRender().map((section) => section.id)
-          );
-          formData.append('sections_url', window.location.pathname);
-          this.cart.setActiveElement(document.activeElement);
-        }
-
-if (formData.get('id') === '45671309214014') {
-  const ids = ['45671309214014', '45644884836670']; // Array of IDs to add to the cart
+if (formData.get('id') === '45527639228719') {
+  const ids = ['45527639228719', '45386639671599']; // Array of IDs to add to the cart
 
   const updates = {}; // Object to store the updates
 
