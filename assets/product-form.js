@@ -39,6 +39,9 @@ if (!customElements.get('product-form')) {
           this.cart.setActiveElement(document.activeElement);
         }
         config.body = formData;
+
+        console.log('formData: ',formData);
+        
         if (formData.get('id') === '45671309214014') {
   const ids = ['45671309214014', '45644884836670']; // Array of IDs to add to the cart
 
