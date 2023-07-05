@@ -83,7 +83,7 @@ if (!customElements.get('product-form')) {
       this.querySelector('.loading-overlay__spinner').classList.add('hidden');
 
       if (!this.error)
-        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: formData.get('id') });
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: matchId });
       this.error = false;
       const quickAddModal = this.closest('quick-add-modal');
       if (quickAddModal) {
