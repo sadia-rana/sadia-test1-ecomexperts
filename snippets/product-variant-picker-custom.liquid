@@ -36,8 +36,8 @@
 <variant-selector class="options" data-url="{{ product.url }}" data-section="{{ section.id }}">
   {% for option in product.options_with_values %}
     {% if option.name == 'Size' %}
-      <div>
-      <label>{{ option.name }}:</label>
+      <div class="size_main">
+      <label  class="size_variant">{{ option.name }}:</label>
       <select name="options[{{ option.name | escape }}]">
         {% for value in option.values %}
           <option
