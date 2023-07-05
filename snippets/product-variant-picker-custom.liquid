@@ -9,10 +9,16 @@
     gap: 10px;
   }
   variant-selector .other-options-label {
-    display:inline-block;
+    
     border-radius: 50%;
     cursor: pointer;
   }
+  select.size_variant {
+    min-width: 280px;
+    padding: 9px;
+    height: 44px;
+    margin-top: 26px;
+}
 </style>
 <variant-selector class="options" data-url="{{ product.url }}" data-section="{{ section.id }}">
   {% for option in product.options_with_values %}
