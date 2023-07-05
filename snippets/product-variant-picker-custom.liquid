@@ -1,0 +1,150 @@
+<style>
+  variant-selector .disabled {
+    display: none;
+  }
+  variant-selector .other-variant-options {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+  }
+  variant-selector .other-options-label {
+    display:inline-block;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+</style>
+
+<variant-selector class="options" data-url="{{ product.url }}" data-section="{{ section.id }}">
+  {% for option in product.options_with_values %}
+    {% if option.name == 'Size' %}
+      <div>
+      <label>{{ option.name }}:</label>
+      <select name="options[{{ option.name | escape }}]">
+        {% for value in option.values %}
+          <option
+            value="{{ value | escape }}"
+            {% if product.selected_or_first_available_variant == value %}
+              selected="selected"
+            {% endif %}
+          >
+            {{ value }}
+          </option>
+        {% endfor %}
+      </select>
+        </div>
+      <script type="application/json">
+        {{ product.variants | json }}
+      </script>
+    {% else %}
+      <div class="other-variant-options">
+      <label>{{ option.name }}:</label>
+        {% for value in option.values %}
+          <input
+            id="{{ value }}-{{ forloop.index }}"
+            name="{{ option.name | escape }}"
+            type="radio"
+            value="{{ value | escape }}"
+            {% if option.selected_value == value %}
+              checked
+            {% endif %}
+            class="disabled"
+          >
+        <label class="other-options-label" for="{{ value }}-{{ forloop.index }}">
+            {{ value }}
+        </label>
+        {% endfor %}
+        </div>
+      <script type="application/json">
+        {{ product.variants | json }}
+      </script>
+    {% endif %}
+  {% endfor %}
+</variant-selector>
+
+<script>
+  
+  
+    class VariantChange extends HTMLElement {
+        constructor() {
+            super();
+            this.addEventListener("change", this.onVariantChange);
+        }
+
+        onVariantChange() {
+            this.getSelectedOptions();
+            this.getSelectedVariant();
+
+            if(this.currentVariantOption) {
+              this.updateUrl();
+              this.updateId();
+              this.updatePrice();
+              this.updateBuyButtons();
+            }
+        }
+
+        getSelectedOptions() {
+            this.option = Array.from(this.querySelectorAll('select'), select => select.value);
+            this.colors =  document.querySelector('input[name="Color"]:checked').value;
+            this.option[1] = this.colors;
+            console.log(this.option)
+        }
+
+        getJson() {
+            this.json = this.json || JSON.parse(this.querySelector('[type="application/json"]').textContent);
+            return this.json;
+        }
+
+        getSelectedVariant() {
+            this.currentVariantOption = this.getJson().find(variant => {
+              const optionValue = !variant.options.map((option, index) => {
+                return this.option[index] === option;
+              }).includes(false)
+
+              if(optionValue) return variant;
+            })
+        }
+
+      updateUrl() {
+        if(!this.currentVariantOption) return;
+        window.history.replaceState({}, '', `${this.dataset.url}?variant=${this.currentVariantOption.id}`);
+      }
+
+      updateId() {
+        const id = document.querySelector('#{{ product_form_id }}').querySelector('input[name="id"]');
+        id.value = this.currentVariantOption.id;
+      }
+
+      updatePrice() {
+        fetch(`${this.dataset.url}?variant=${this.currentVariantOption.id}&section_id=${this.dataset.section}`)
+        .then(response => response.text())
+        .then(text => {
+          const html = new DOMParser().parseFromString(text, 'text/html');
+          const oldPrice = document.querySelector('span.price-item.price-item--regular');
+          const newPrice = html.querySelector('span.price-item.price-item--regular');
+          if(oldPrice && newPrice) {
+            oldPrice.innerHTML = newPrice.innerHTML;
+          }
+          
+        })
+      }
+
+      updateBuyButtons() {
+        const buttons = document.querySelector('#ProductSubmitButton-{{ section_id }}');
+        if(this.currentVariantOption.available == false) {
+          buttons.setAttribute('disabled', '');
+          buttons.setAttribute('value', 'Sold Out');
+          buttons.firstElementChild.innerHTML = 'Sold Out';
+          console.log('unavailable')
+        } else {
+          buttons.removeAttribute('disabled');
+          buttons.setAttribute('value', 'Add to cart');
+          buttons.firstElementChild.innerHTML = 'Add to cart';
+          console.log('available')
+        }
+      }
+    }
+    customElements.define('variant-selector', VariantChange)
+
+
+</script>
