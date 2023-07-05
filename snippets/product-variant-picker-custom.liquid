@@ -126,8 +126,9 @@
       updateUrl() {
         if(!this.currentVariantOption) return;
         window.history.replaceState({}, '', `${this.dataset.url}?variant=${this.currentVariantOption.id}`);
+        console.log(this.currentVariantOption.id)
       }
-
+    
       updateId() {
         const id = document.querySelector('#{{ product_form_id }}').querySelector('input[name="id"]');
         id.value = this.currentVariantOption.id;
