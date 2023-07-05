@@ -39,53 +39,76 @@ if (!customElements.get('product-form')) {
           this.cart.setActiveElement(document.activeElement);
         }
         config.body = formData;
+      if (formData.get('id') === '45671309181246' || formData.get('id') === '45644884836670') {
+  const ids = ['45671309181246', '45644884836670']; // Array of IDs to add to the cart
 
-        var arrMatch = ['45671309246782', '45671309181246', '45671309214014']
-        var matchId = formData.get('id');
-        console.log('here: ', matchId, arrMatch, arrMatch.indexOf(matchId))
-        if(arrMatch.indexOf(matchId) !== -1){
-          const ids = [matchId, '45644884836670']; // Array of IDs to add to the cart
-        
-          const updates = {}; // Object to store the updates
-        
-          // Populate the updates object with the IDs and quantities
-          ids.forEach(id => {
-            updates[id] = 1; // Set the quantity as 1 for each ID
-          });
-        
-          const formData = {
-            'updates': updates
-          };
-        
-          fetch(window.Shopify.routes.root + 'cart/update.js', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          })
-          .then(response => {
-            return response.json();
-          })
-          .then(data => {
-            // Handle the response
-            console.log(data);
-      
-            // Add the desired functionality from the 'else' block here
-            // this.submitButton.classList.remove('loading');
-            // if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
-            // if (!this.error) this.submitButton.removeAttribute('aria-disabled');
-            // this.querySelector('.loading-overlay__spinner').classList.add('hidden');
-      
-            
-      
-            
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
+  const updates = {}; // Object to store the updates
+
+  // Populate the updates object with the IDs and quantities
+  ids.forEach(id => {
+    updates[id] = 1; // Set the quantity as 1 for each ID
+  });
+
+  const formData = {
+    'updates': updates
+  };
+
+  fetch(window.Shopify.routes.root + 'cart/update.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(formData)
+  })
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      // Handle the response
+      console.log(data);
+
+      // Add the desired functionality from the 'else' block here
+      this.submitButton.classList.remove('loading');
+      if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
+      if (!this.error) this.submitButton.removeAttribute('aria-disabled');
+      this.querySelector('.loading-overlay__spinner').classList.add('hidden');
+
+      // Code for quick modal and cart update from the 'else' block
+      this.error = false;
+      const quickAddModal = this.closest('quick-add-modal');
+      if (quickAddModal) {
+        document.body.addEventListener(
+          'modalClosed',
+          () => {
+            setTimeout(() => {
+              if (this.cart) {
+                this.cart.renderContents(data);
+              } else {
+                const cartNotificationProduct = document.querySelector('.cart-notification-product');
+                if (cartNotificationProduct) {
+                  cartNotificationProduct.renderContents(data);
+                }
+              }
+            });
+          },
+          { once: true }
+        );
+        quickAddModal.hide(true);
+      } else {
+        if (this.cart) {
+          this.cart.renderContents(data);
+        } else {
+          const cartNotificationProduct = document.querySelector('.cart-notification-product');
+          if (cartNotificationProduct) {
+            cartNotificationProduct.renderContents(data);
+          }
         }
-          // else {
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+} else {
   fetch(`${routes.cart_add_url}`, config)
     .then((response) => response.json())
     .then((response) => {
@@ -113,6 +136,8 @@ if (!customElements.get('product-form')) {
       if (!this.error)
         publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: formData.get('id') });
       this.error = false;
+
+      // Code for quick modal and cart update
       const quickAddModal = this.closest('quick-add-modal');
       if (quickAddModal) {
         document.body.addEventListener(
@@ -129,7 +154,7 @@ if (!customElements.get('product-form')) {
         this.cart.renderContents(response);
       }
 
-      // Add the desired functionality from the 'if' block here
+      // Additional functionality specific to the 'else' block
       this.submitButton.classList.remove('loading');
       if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
       if (!this.error) this.submitButton.removeAttribute('aria-disabled');
@@ -138,7 +163,9 @@ if (!customElements.get('product-form')) {
     .catch((e) => {
       console.error(e);
     });
-// }
+}
+
+
 
       }
 
