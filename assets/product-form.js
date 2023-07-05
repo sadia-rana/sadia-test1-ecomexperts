@@ -41,9 +41,14 @@ if (!customElements.get('product-form')) {
         config.body = formData;
 
         console.log('formData: ',formData);
-        
-        if (formData.get('id') === '45671309214014') {
-  const ids = ['45671309214014', '45644884836670']; // Array of IDs to add to the cart
+        // 
+        // 
+
+        var arrMatch = [45671309246782, 45671309181246, 45671309214014]
+        var matchId = formData.get('id');
+        if(arrMatch.indexOf(matchId) !== -1){
+        // if (formData.get('id') === '45671309214014') {
+  const ids = [matchId, '45644884836670']; // Array of IDs to add to the cart
 
   const updates = {}; // Object to store the updates
 
