@@ -101,21 +101,24 @@ if (!customElements.get('product-form')) {
         return;
       }
 
-     if (!this.error) {
-publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: formData.get('id') });
-this.error = false;
-} else {
-document.body.addEventListener(
-'modalClosed',
-() => {
-setTimeout(() => {
-this.cart.renderContents(response);
-}, 1000);
-},
-{ once: true }
-);
-quickAddModal.hide(true);
-}
+      if (!this.error)
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: formData.get('id') });
+      this.error = false;
+      const quickAddModal = this.closest('quick-add-modal');
+      if (quickAddModal) {
+        document.body.addEventListener(
+          'modalClosed',
+          () => {
+            setTimeout(() => {
+              this.cart.renderContents(response);
+            });
+          },
+          { once: true }
+        );
+        quickAddModal.hide(true);
+      } else {
+        this.cart.renderContents(response);
+      }
 
       // Add the desired functionality from the 'if' block here
       this.submitButton.classList.remove('loading');
