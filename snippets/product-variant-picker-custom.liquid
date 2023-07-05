@@ -36,9 +36,9 @@
 <variant-selector class="options" data-url="{{ product.url }}" data-section="{{ section.id }}">
   {% for option in product.options_with_values %}
     {% if option.name == 'Size' %}
-      <div class="size_main">
+      <div>
       <label>{{ option.name }}:</label>
-      <select class="size_variant" name="options[{{ option.name | escape }}]">
+      <select name="options[{{ option.name | escape }}]">
         {% for value in option.values %}
           <option
             value="{{ value | escape }}"
@@ -105,7 +105,7 @@
             this.option = Array.from(this.querySelectorAll('select'), select => select.value);
             this.colors =  document.querySelector('input[name="Color"]:checked').value;
             this.option[1] = this.colors;
-            console.log(this.option,this.currentVariantOption)
+            console.log(this.option)
         }
 
         getJson() {
@@ -126,9 +126,8 @@
       updateUrl() {
         if(!this.currentVariantOption) return;
         window.history.replaceState({}, '', `${this.dataset.url}?variant=${this.currentVariantOption.id}`);
-        console.log(this.currentVariantOption.id)
       }
-    
+
       updateId() {
         const id = document.querySelector('#{{ product_form_id }}').querySelector('input[name="id"]');
         id.value = this.currentVariantOption.id;
@@ -167,3 +166,4 @@
 
 
 </script>
+
