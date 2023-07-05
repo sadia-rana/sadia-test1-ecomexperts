@@ -81,6 +81,27 @@ if (!customElements.get('product-form')) {
       if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
       if (!this.error) this.submitButton.removeAttribute('aria-disabled');
       this.querySelector('.loading-overlay__spinner').classList.add('hidden');
+
+      if (!this.error)
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: formData.get('id') });
+      this.error = false;
+      const quickAddModal = this.closest('quick-add-modal');
+      if (quickAddModal) {
+        document.body.addEventListener(
+          'modalClosed',
+          () => {
+            setTimeout(() => {
+              this.cart.renderContents(response);
+            });
+          },
+          { once: true }
+        );
+        quickAddModal.hide(true);
+      } else {
+        this.cart.renderContents(response);
+      }
+
+      
     })
     .catch((error) => {
       console.error('Error:', error);
