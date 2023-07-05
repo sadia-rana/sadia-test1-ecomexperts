@@ -105,7 +105,7 @@
             this.option = Array.from(this.querySelectorAll('select'), select => select.value);
             this.colors =  document.querySelector('input[name="Color"]:checked').value;
             this.option[1] = this.colors;
-            console.log(this.option)
+            console.log(this.option,this.currentVariantOption)
         }
 
         getJson() {
