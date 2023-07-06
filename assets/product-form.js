@@ -100,7 +100,8 @@ if (!customElements.get('product-form')) {
         }
   
       // Sadia: Custom code ended for adding extra product with medium
-  
+      setTimeout(function(){
+        
   fetch(`${routes.cart_add_url}`, config)
     .then((response) => response.json())
     .then((response) => {
@@ -154,6 +155,7 @@ if (!customElements.get('product-form')) {
       console.error(e);
     });
 
+      }, 1000)
       }
 
       handleErrorMessage(errorMessage = false) {
