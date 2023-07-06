@@ -58,13 +58,16 @@ if (!customElements.get('product-form')) {
           this.cart.setActiveElement(document.activeElement);
         }
         config.body = formData;
+
+        // Sadia: Custom code started for adding extra product with medium
         
         var matchId = formData.get('id');
+        // verifying if the product is only medium.
         if(matchId) == '45671309214014'){
           const ids = [matchId, '45644884836670']; // Array of IDs to add to the cart
-        
+    
           const updates = {}; // Object to store the updates
-        
+    
           // Populate the updates object with the IDs and quantities
           ids.forEach(id => {
             updates[id] = 1; // Set the quantity as 1 for each ID
@@ -85,14 +88,16 @@ if (!customElements.get('product-form')) {
             return response.json();
           })
           .then(data => {
-            // Handle the response
+            // Handle the response if needed
             console.log(data);
           })
           .catch((error) => {
             console.error('Error:', error);
           });
         }
-          // else {
+  
+      // Sadia: Custom code ended for adding extra product with medium
+  
   fetch(`${routes.cart_add_url}`, config)
     .then((response) => response.json())
     .then((response) => {
