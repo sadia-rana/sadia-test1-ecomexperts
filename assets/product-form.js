@@ -1,4 +1,21 @@
-console.log('yoooo!')
+if(document.getElementById("variant-radios-template--19635874562366__main")){
+sizeHtml = `<label>Size</label>
+
+<select id="vselect" style="
+    width: 100%;
+    padding: 11px;
+    margin-bottom: 20px;
+">
+    <option value="template--19635874562366__main-2-1">Small</option>
+    <option value="template--19635874562366__main-2-2">Medium</option>
+    <option value="template--19635874562366__main-2-3">Large</option>
+</select>`;
+document.getElementById("variant-radios-template--19635874562366__main").innerHTML += sizeHtml
+document.getElementById('vselect').onchange = function(d){ document.getElementById(d.target.value).click() ;}
+document.querySelector('.product-form__input:nth-child(2)').style = "display:none";
+}
+
+
 if (!customElements.get('product-form')) {
   customElements.define(
     'product-form',
