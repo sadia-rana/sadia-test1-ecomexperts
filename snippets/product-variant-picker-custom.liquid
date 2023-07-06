@@ -2,14 +2,8 @@
   variant-selector .disabled {
     display: none;
   }
-  input[value=Black]+label, input[value=Red]+label, input[value=Tan]+label {
-    
-    position: relative;
-    left: -49px;
-    top: 10px;
-}
   variant-selector .other-variant-options {
-  
+    display: flex;
     justify-content: flex-start;
     align-items: center;
     gap: 10px;
@@ -19,26 +13,14 @@
     border-radius: 50%;
     cursor: pointer;
   }
-  select.size_variant {
-    min-width: 280px;
-    padding: 9px;
-    height: 44px;
-    
-}
-  .size_main {
-    margin: 32px 0px;
-}
-
-.size_main label {
-    display: block;
-}
 </style>
+
 <variant-selector class="options" data-url="{{ product.url }}" data-section="{{ section.id }}">
   {% for option in product.options_with_values %}
     {% if option.name == 'Size' %}
-      <div class="size_main">
-      <label >{{ option.name }}:</label>
-      <select  class="size_variant" name="options[{{ option.name | escape }}]">
+      <div>
+      <label>{{ option.name }}:</label>
+      <select name="options[{{ option.name | escape }}]">
         {% for value in option.values %}
           <option
             value="{{ value | escape }}"
@@ -119,10 +101,8 @@
                 return this.option[index] === option;
               }).includes(false)
 
-              console.log(optionValue)
               if(optionValue) return variant;
             })
-          
         }
 
       updateUrl() {
@@ -168,4 +148,3 @@
 
 
 </script>
-
