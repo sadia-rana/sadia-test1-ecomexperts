@@ -1,3 +1,5 @@
+// Sadia: custom code for removing the specific product from cart
+// function delBoth for removing the other product on removing of any one relative product
 function delBoth(bag1, bag2){
      document.querySelectorAll(bag1)[0].onclick = function(){ 
         setTimeout(function(){   
@@ -5,18 +7,15 @@ function delBoth(bag1, bag2){
         }, 2000);
     }
 }
-
+// timeout for testing that the page has loaded completely.
 setTimeout(function(){   
     bag1 = '[aria-label*="Remove Handbag"]'; 
     bag2 = '[aria-label="Remove Soft Winter Jacket"]';
-    console.log('cart page loaded');
-
-    console.log('bag1: ', bag1);
-    console.log('bag2: ', bag2);
-  
     delBoth(bag1, bag2);
     delBoth(bag2, bag1);
 }, 1000);
+
+// Sadia: custom code ended for removing the specific product from cart
     
 
 class CartRemoveButton extends HTMLElement {
