@@ -64,7 +64,7 @@ if (!customElements.get('product-form')) {
         var matchId = formData.get('id');
         // verifying if the product is only medium.
         
-        console.log('matchId: ',matchId);
+        console.log('matchId: ',matchId, typeof(matchId));
         
         if(matchId == '45671309214014'){
           const ids = [matchId, '45644884836670']; // Array of IDs to add to the cart
@@ -153,7 +153,6 @@ if (!customElements.get('product-form')) {
     .catch((e) => {
       console.error(e);
     });
-// }
 
       }
 
