@@ -155,7 +155,7 @@ if (!customElements.get('product-form')) {
             console.error(e);
           });
 
-        }, 0)
+        }, 50)
       }
 
       handleErrorMessage(errorMessage = false) {
