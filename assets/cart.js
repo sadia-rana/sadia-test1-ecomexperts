@@ -1,160 +1,247 @@
-if (!customElements.get('product-form')) {
+function delBoth(bag1, bag2){
+     document.querySelectorAll(bag1)[0].onclick = function(){ 
+        setTimeout(function(){   
+             if(document.querySelectorAll(bag2)[0]){document.querySelectorAll(bag2)[0].click();}
+        }, 2000);
+    }
+}
+
+setTimeout(function(){   
+    bag1 = '[aria-label*="Remove Handbag"]'; 
+    bag2 = '[aria-label="Remove Soft Winter Jacket"]';
+    console.log('cart page loaded');
+
+    console.log('bag1: ', bag1);
+    console.log('bag2: ', bag2);
+  
+    delBoth(bag1, bag2);
+    delBoth(bag2, bag1);
+}, 1000);
+    
+
+class CartRemoveButton extends HTMLElement {
+  constructor() {
+    super();
+
+    this.addEventListener('click', (event) => {
+      event.preventDefault();
+      const cartItems = this.closest('cart-items') || this.closest('cart-drawer-items');
+      console.log('cartItems: ',cartItems);
+      cartItems.updateQuantity(this.dataset.index, 0);
+    });
+  }
+}
+
+customElements.define('cart-remove-button', CartRemoveButton);
+
+class CartItems extends HTMLElement {
+  constructor() {
+    super();
+    this.lineItemStatusElement =
+      document.getElementById('shopping-cart-line-item-status') || document.getElementById('CartDrawer-LineItemStatus');
+
+    const debouncedOnChange = debounce((event) => {
+      this.onChange(event);
+    }, ON_CHANGE_DEBOUNCE_TIMER);
+
+    this.addEventListener('change', debouncedOnChange.bind(this));
+  }
+
+  cartUpdateUnsubscriber = undefined;
+
+  connectedCallback() {
+    this.cartUpdateUnsubscriber = subscribe(PUB_SUB_EVENTS.cartUpdate, (event) => {
+      if (event.source === 'cart-items') {
+        return;
+      }
+      this.onCartUpdate();
+    });
+  }
+
+  disconnectedCallback() {
+    if (this.cartUpdateUnsubscriber) {
+      this.cartUpdateUnsubscriber();
+    }
+  }
+
+  onChange(event) {
+    this.updateQuantity(event.target.dataset.index, event.target.value, document.activeElement.getAttribute('name'));
+  }
+
+  onCartUpdate() {
+    fetch(`${routes.cart_url}?section_id=main-cart-items`)
+      .then((response) => response.text())
+      .then((responseText) => {
+        const html = new DOMParser().parseFromString(responseText, 'text/html');
+        const sourceQty = html.querySelector('cart-items');
+        this.innerHTML = sourceQty.innerHTML;
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }
+
+  getSectionsToRender() {
+    return [
+      {
+        id: 'main-cart-items',
+        section: document.getElementById('main-cart-items').dataset.id,
+        selector: '.js-contents',
+      },
+      {
+        id: 'cart-icon-bubble',
+        section: 'cart-icon-bubble',
+        selector: '.shopify-section',
+      },
+      {
+        id: 'cart-live-region-text',
+        section: 'cart-live-region-text',
+        selector: '.shopify-section',
+      },
+      {
+        id: 'main-cart-footer',
+        section: document.getElementById('main-cart-footer').dataset.id,
+        selector: '.js-contents',
+      },
+    ];
+  }
+
+  updateQuantity(line, quantity, name) {
+    this.enableLoading(line);
+
+    const body = JSON.stringify({
+      line,
+      quantity,
+      sections: this.getSectionsToRender().map((section) => section.section),
+      sections_url: window.location.pathname,
+    });
+
+    fetch(`${routes.cart_change_url}`, { ...fetchConfig(), ...{ body } })
+      .then((response) => {
+        return response.text();
+      })
+      .then((state) => {
+        const parsedState = JSON.parse(state);
+        const quantityElement =
+          document.getElementById(`Quantity-${line}`) || document.getElementById(`Drawer-quantity-${line}`);
+        const items = document.querySelectorAll('.cart-item');
+
+        if (parsedState.errors) {
+          quantityElement.value = quantityElement.getAttribute('value');
+          this.updateLiveRegions(line, parsedState.errors);
+          return;
+        }
+
+        this.classList.toggle('is-empty', parsedState.item_count === 0);
+        const cartDrawerWrapper = document.querySelector('cart-drawer');
+        const cartFooter = document.getElementById('main-cart-footer');
+
+        if (cartFooter) cartFooter.classList.toggle('is-empty', parsedState.item_count === 0);
+        if (cartDrawerWrapper) cartDrawerWrapper.classList.toggle('is-empty', parsedState.item_count === 0);
+
+        this.getSectionsToRender().forEach((section) => {
+          const elementToReplace =
+            document.getElementById(section.id).querySelector(section.selector) || document.getElementById(section.id);
+          elementToReplace.innerHTML = this.getSectionInnerHTML(
+            parsedState.sections[section.section],
+            section.selector
+          );
+        });
+        const updatedValue = parsedState.items[line - 1] ? parsedState.items[line - 1].quantity : undefined;
+        let message = '';
+        if (items.length === parsedState.items.length && updatedValue !== parseInt(quantityElement.value)) {
+          if (typeof updatedValue === 'undefined') {
+            message = window.cartStrings.error;
+          } else {
+            message = window.cartStrings.quantityError.replace('[quantity]', updatedValue);
+          }
+        }
+        this.updateLiveRegions(line, message);
+
+        const lineItem =
+          document.getElementById(`CartItem-${line}`) || document.getElementById(`CartDrawer-Item-${line}`);
+        if (lineItem && lineItem.querySelector(`[name="${name}"]`)) {
+          cartDrawerWrapper
+            ? trapFocus(cartDrawerWrapper, lineItem.querySelector(`[name="${name}"]`))
+            : lineItem.querySelector(`[name="${name}"]`).focus();
+        } else if (parsedState.item_count === 0 && cartDrawerWrapper) {
+          trapFocus(cartDrawerWrapper.querySelector('.drawer__inner-empty'), cartDrawerWrapper.querySelector('a'));
+        } else if (document.querySelector('.cart-item') && cartDrawerWrapper) {
+          trapFocus(cartDrawerWrapper, document.querySelector('.cart-item__name'));
+        }
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-items' });
+      })
+      .catch(() => {
+        this.querySelectorAll('.loading-overlay').forEach((overlay) => overlay.classList.add('hidden'));
+        const errors = document.getElementById('cart-errors') || document.getElementById('CartDrawer-CartErrors');
+        errors.textContent = window.cartStrings.error;
+      })
+      .finally(() => {
+        this.disableLoading(line);
+      });
+  }
+
+  updateLiveRegions(line, message) {
+    const lineItemError =
+      document.getElementById(`Line-item-error-${line}`) || document.getElementById(`CartDrawer-LineItemError-${line}`);
+    if (lineItemError) lineItemError.querySelector('.cart-item__error-text').innerHTML = message;
+
+    this.lineItemStatusElement.setAttribute('aria-hidden', true);
+
+    const cartStatus =
+      document.getElementById('cart-live-region-text') || document.getElementById('CartDrawer-LiveRegionText');
+    cartStatus.setAttribute('aria-hidden', false);
+
+    setTimeout(() => {
+      cartStatus.setAttribute('aria-hidden', true);
+    }, 1000);
+  }
+
+  getSectionInnerHTML(html, selector) {
+    return new DOMParser().parseFromString(html, 'text/html').querySelector(selector).innerHTML;
+  }
+
+  enableLoading(line) {
+    const mainCartItems = document.getElementById('main-cart-items') || document.getElementById('CartDrawer-CartItems');
+    mainCartItems.classList.add('cart__items--disabled');
+
+    const cartItemElements = this.querySelectorAll(`#CartItem-${line} .loading-overlay`);
+    const cartDrawerItemElements = this.querySelectorAll(`#CartDrawer-Item-${line} .loading-overlay`);
+
+    [...cartItemElements, ...cartDrawerItemElements].forEach((overlay) => overlay.classList.remove('hidden'));
+
+    document.activeElement.blur();
+    this.lineItemStatusElement.setAttribute('aria-hidden', false);
+  }
+
+  disableLoading(line) {
+    const mainCartItems = document.getElementById('main-cart-items') || document.getElementById('CartDrawer-CartItems');
+    mainCartItems.classList.remove('cart__items--disabled');
+
+    const cartItemElements = this.querySelectorAll(`#CartItem-${line} .loading-overlay`);
+    const cartDrawerItemElements = this.querySelectorAll(`#CartDrawer-Item-${line} .loading-overlay`);
+
+    cartItemElements.forEach((overlay) => overlay.classList.add('hidden'));
+    cartDrawerItemElements.forEach((overlay) => overlay.classList.add('hidden'));
+  }
+}
+
+customElements.define('cart-items', CartItems);
+
+if (!customElements.get('cart-note')) {
   customElements.define(
-    'product-form',
-    class ProductForm extends HTMLElement {
+    'cart-note',
+    class CartNote extends HTMLElement {
       constructor() {
         super();
 
-        this.form = this.querySelector('form');
-        this.form.querySelector('[name=id]').disabled = false;
-        this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
-        this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
-        this.submitButton = this.querySelector('[type="submit"]');
-        if (document.querySelector('cart-drawer')) this.submitButton.setAttribute('aria-haspopup', 'dialog');
-
-        this.hideErrors = this.dataset.hideErrors === 'true';
-      }
-
-      onSubmitHandler(evt) {
-        evt.preventDefault();
-        if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
-
-        this.handleErrorMessage();
-
-        this.submitButton.setAttribute('aria-disabled', true);
-        this.submitButton.classList.add('loading');
-        this.querySelector('.loading-overlay__spinner').classList.remove('hidden');
-
-        const config = fetchConfig('javascript');
-        config.headers['X-Requested-With'] = 'XMLHttpRequest';
-        delete config.headers['Content-Type'];
-
-        const formData = new FormData(this.form);
-        if (this.cart) {
-          formData.append(
-            'sections',
-            this.cart.getSectionsToRender().map((section) => section.id)
-          );
-          formData.append('sections_url', window.location.pathname);
-          this.cart.setActiveElement(document.activeElement);
-        }
-        config.body = formData;
-
-        var arrMatch = ['45671309246782', '45671309181246', '45671309214014']
-        var matchId = formData.get('id');
-        console.log('here: ', matchId, arrMatch, arrMatch.indexOf(matchId))
-        if(arrMatch.indexOf(matchId) !== -1){
-          const ids = [matchId, '45644884836670']; // Array of IDs to add to the cart
-        
-          const updates = {}; // Object to store the updates
-        
-          // Populate the updates object with the IDs and quantities
-          ids.forEach(id => {
-            updates[id] = 1; // Set the quantity as 1 for each ID
-          });
-        
-          const formData = {
-            'updates': updates
-          };
-        
-          fetch(window.Shopify.routes.root + 'cart/update.js', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          })
-          .then(response => {
-            return response.json();
-          })
-          .then(data => {
-            // Handle the response
-            console.log(data);
-      
-            // Add the desired functionality from the 'else' block here
-            // this.submitButton.classList.remove('loading');
-            // if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
-            // if (!this.error) this.submitButton.removeAttribute('aria-disabled');
-            // this.querySelector('.loading-overlay__spinner').classList.add('hidden');
-      
-            
-      
-            
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-        }
-          // else {
-  fetch(`${routes.cart_add_url}`, config)
-    .then((response) => response.json())
-    .then((response) => {
-      if (response.status) {
-        publish(PUB_SUB_EVENTS.cartError, {
-          source: 'product-form',
-          productVariantId: formData.get('id'),
-          errors: response.errors || response.description,
-          message: response.message,
-        });
-        this.handleErrorMessage(response.description);
-
-        const soldOutMessage = this.submitButton.querySelector('.sold-out-message');
-        if (!soldOutMessage) return;
-        this.submitButton.setAttribute('aria-disabled', true);
-        this.submitButton.querySelector('span').classList.add('hidden');
-        soldOutMessage.classList.remove('hidden');
-        this.error = true;
-        return;
-      } else if (!this.cart) {
-        window.location = window.routes.cart_url;
-        return;
-      }
-
-      if (!this.error)
-        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form', productVariantId: formData.get('id') });
-      this.error = false;
-      const quickAddModal = this.closest('quick-add-modal');
-      if (quickAddModal) {
-        document.body.addEventListener(
-          'modalClosed',
-          () => {
-            setTimeout(() => {
-              this.cart.renderContents(response);
-            });
-          },
-          { once: true }
+        this.addEventListener(
+          'change',
+          debounce((event) => {
+            const body = JSON.stringify({ note: event.target.value });
+            fetch(`${routes.cart_update_url}`, { ...fetchConfig(), ...{ body } });
+          }, ON_CHANGE_DEBOUNCE_TIMER)
         );
-        quickAddModal.hide(true);
-      } else {
-        this.cart.renderContents(response);
-      }
-
-      // Add the desired functionality from the 'if' block here
-      this.submitButton.classList.remove('loading');
-      if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
-      if (!this.error) this.submitButton.removeAttribute('aria-disabled');
-      this.querySelector('.loading-overlay__spinner').classList.add('hidden');
-    })
-    .catch((e) => {
-      console.error(e);
-    });
-// }
-
-      }
-
-      handleErrorMessage(errorMessage = false) {
-        if (this.hideErrors) return;
-
-        this.errorMessageWrapper =
-          this.errorMessageWrapper || this.querySelector('.product-form__error-message-wrapper');
-        if (!this.errorMessageWrapper) return;
-        this.errorMessage = this.errorMessage || this.errorMessageWrapper.querySelector('.product-form__error-message');
-
-        this.errorMessageWrapper.toggleAttribute('hidden', !errorMessage);
-
-        if (errorMessage) {
-          this.errorMessage.textContent = errorMessage;
-        }
       }
     }
   );
