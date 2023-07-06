@@ -1,20 +1,21 @@
+// Sadia: Custom code for dropdown started.
+//  verifying if the specific product page. 
 if(document.getElementById("variant-radios-template--19635874562366__main")){
+  // html for the size selector  
 sizeHtml = `<label>Size</label>
-
-<select id="vselect" style="
-    width: 100%;
-    padding: 11px;
-    margin-bottom: 20px;
-">
+<select id="vselect" style="width: 100%;padding: 11px;margin-bottom: 20px;">
     <option value="template--19635874562366__main-2-1">Small</option>
     <option value="template--19635874562366__main-2-2">Medium</option>
     <option value="template--19635874562366__main-2-3">Large</option>
 </select>`;
+  // passing the html to show new size dropdown.
 document.getElementById("variant-radios-template--19635874562366__main").innerHTML += sizeHtml
+  // once user will select the size automaticly update the size from new dropdown. 
 document.getElementById('vselect').onchange = function(d){ document.getElementById(d.target.value).click() ;}
-document.querySelector('.product-form__input:nth-child(2)').style = "display:none";
+  // hiding the original size selector.
+  document.querySelector('.product-form__input:nth-child(2)').style = "display:none";
 }
-
+// Sadia: Custom code ended.
 
 if (!customElements.get('product-form')) {
   customElements.define(
@@ -57,11 +58,9 @@ if (!customElements.get('product-form')) {
           this.cart.setActiveElement(document.activeElement);
         }
         config.body = formData;
-
-        var arrMatch = ['45671309246782', '45671309181246', '45671309214014']
+        
         var matchId = formData.get('id');
-        console.log('here: ', matchId, arrMatch, arrMatch.indexOf(matchId))
-        if(arrMatch.indexOf(matchId) !== -1){
+        if(matchId) == '45671309214014'){
           const ids = [matchId, '45644884836670']; // Array of IDs to add to the cart
         
           const updates = {}; // Object to store the updates
@@ -88,16 +87,6 @@ if (!customElements.get('product-form')) {
           .then(data => {
             // Handle the response
             console.log(data);
-      
-            // Add the desired functionality from the 'else' block here
-            // this.submitButton.classList.remove('loading');
-            // if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
-            // if (!this.error) this.submitButton.removeAttribute('aria-disabled');
-            // this.querySelector('.loading-overlay__spinner').classList.add('hidden');
-      
-            
-      
-            
           })
           .catch((error) => {
             console.error('Error:', error);
