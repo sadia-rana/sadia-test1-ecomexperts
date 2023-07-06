@@ -63,7 +63,7 @@ if (!customElements.get('product-form')) {
         
         var matchId = formData.get('id');
         // verifying if the product is only medium.
-        if(matchId) == '45671309214014'){
+        if(matchId == '45671309214014'){
           const ids = [matchId, '45644884836670']; // Array of IDs to add to the cart
     
           const updates = {}; // Object to store the updates
