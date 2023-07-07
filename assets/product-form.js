@@ -15,7 +15,7 @@ document.getElementById("variant-radios-template--19635874562366__main").innerHT
 document.getElementById('vselect').onchange = function(d){ document.getElementById(d.target.value).click() ;}
   // hiding the original size selector.
    document.getElementById("template--19635874562366__main-2-0").click()
-  // document.querySelector('.product-form__input:nth-child(2)').style = "display:none";
+  document.querySelector('.product-form__input:nth-child(2)').style = "display:none";
 }
 // Sadia: Custom code ended.
 
