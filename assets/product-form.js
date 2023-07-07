@@ -4,7 +4,7 @@ if(document.getElementById("variant-radios-template--19635874562366__main")){
   // html for the size selector  
 sizeHtml = `<label>Size</label>
 <select id="vselect" style="width: 100%;padding: 11px;margin-bottom: 20px;">
-    <option value="template--19635874562366__main-2-0" >Unselected</option>
+    <option value="template--19635874562366__main-2-0" selected >Unselected</option>
     <option value="template--19635874562366__main-2-1" >Small</option>
     <option value="template--19635874562366__main-2-2">Medium</option>
     <option value="template--19635874562366__main-2-3">Large</option>
@@ -14,6 +14,7 @@ document.getElementById("variant-radios-template--19635874562366__main").innerHT
   // once user will select the size automaticly update the size from new dropdown. 
 document.getElementById('vselect').onchange = function(d){ document.getElementById(d.target.value).click() ;}
   // hiding the original size selector.
+   document.getElementById("template--19635874562366__main-2-0").click()
   // document.querySelector('.product-form__input:nth-child(2)').style = "display:none";
 }
 // Sadia: Custom code ended.
